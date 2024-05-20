@@ -1,0 +1,5 @@
+venv/
+main.py
+tests/
+.idea/
+__pycache__/
