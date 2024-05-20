@@ -12,6 +12,5 @@ setup(
     version='1.0.0',
     packages=find_packages(),
     install_requires=read_requirements(),
-    long_description=open(join(dirname(__file__), 'README.md')).read(),
     author='0gl04q',
 )
