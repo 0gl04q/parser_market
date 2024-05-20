@@ -71,17 +71,9 @@ class Scraper:
 
     def __get_url(self):
 
-        self.driver.get(self.shop.link)
-
         logger.info(f'get link, order: {self.order}')
 
-        search_box = self.driver.find_element(By.XPATH, '//input[@class="search-field-input"]')
-        search_box.send_keys(self.query)
-
-        search_button = self.driver.find_element(By.XPATH,
-                                                 '//button[@class="header-search-form__search-button text-search"]')
-
-        search_button.click()
+        self.driver.get(self.shop.link + self.query)
 
         time.sleep(5)
 
