@@ -1,9 +1,8 @@
 from bs4 import BeautifulSoup
-from mailer import Mail
-
-import pickle
 import pandas as pd
 import requests
+
+from pack.mailer import Mail
 
 
 class Parser:

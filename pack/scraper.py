@@ -10,8 +10,8 @@ from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 import time
 import os
 
-from parser import Parser
-from shops import InternetShops
+from pack.parser import Parser
+from pack.shops import InternetShops
 
 PROFILE_PATH = os.environ['PROFILE_PATH']
 
