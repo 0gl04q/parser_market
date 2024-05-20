@@ -25,7 +25,7 @@ class Shop:
 
 class InternetShops:
     megamarket = Shop(
-        link='https://www.megamarket.ru',
+        link='https://megamarket.ru/catalog/?q=',
         parameters=ShopParameters(
             catalog=Parameter(
                 tag='div',
