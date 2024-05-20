@@ -12,7 +12,7 @@ setup(
     packages=find_packages(),
     install_requires=read_requirements(),
     description='Парсер различный площадок',
-    long_description=open('README.md').read(),
+    long_description=open('README.md', encoding='utf-8').read(),
     long_description_content_type='text/markdown',
     author='0gl04q',
     author_email='rdc_atm@mail.ru',
