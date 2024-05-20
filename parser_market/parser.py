@@ -2,16 +2,24 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import requests
 
-from pack.mailer import Mail
+from parser_market.mailer import Mail
+from parser_market.logger import setup_logger
+
+logger = setup_logger(__name__)
 
 
 class Parser:
     """ Класс парсинга и создания xlsx, с возможностью взаимодействовать с элементами в дальнейшем
 
     :param page_source: Содержание страницы
+    :param order: ID заявки
+    :shop: Магазин поиска
     """
 
     def __init__(self, order, shop, page_source=None):
+
+        logger.info(f'init parsing, order: {order}')
+
         self.order = order
         self.page_source = page_source
         self.shop = shop
@@ -34,6 +42,8 @@ class Parser:
 
     def update_lists(self):
         """ Функция сбора информации имен, цен, бонусов"""
+
+        logger.info(f'start updated lists, order: {self.order}')
 
         # Собираем суп
         soup = BeautifulSoup(self.page_source, features="html.parser")
@@ -70,6 +80,8 @@ class Parser:
 
         self.page_source = None
 
+        logger.info(f'end updated lists, order: {self.order}')
+
     def create_df(self):
         self.df = pd.DataFrame({'Имя': self.names,
                                 'Ссылки': self.links,
@@ -85,6 +97,9 @@ class Parser:
         self.df = self.df.sort_values(by=by)
 
     def send_in_db(self):
+
+        logger.info(f'start send card in db, order: {self.order}')
+
         mail = Mail()
 
         self.send_counter = 0
@@ -102,6 +117,9 @@ class Parser:
             })
 
             if response.status_code != 201:
+
+                logger.error(f'ERROR SEND REQUEST ON SERVER. CHECK EMAIL. ORDER: {self.order}')
+
                 mail.send_message(
                     subject=f'Ошибка {response.status_code}',
                     text=f'<p> Произошла ошибка при передаче карточки: {response.status_code}, </p><br>'
@@ -111,3 +129,5 @@ class Parser:
                 self.send_counter += 1
 
         mail.quit_server()
+
+        logger.info(f'end send cards in db, order: {self.order}')

@@ -3,3 +3,4 @@ main.py
 tests/
 .idea/
 __pycache__/
+logging/
