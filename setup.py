@@ -1,4 +1,5 @@
 from setuptools import setup, find_packages
+from os.path import join, dirname
 
 
 def read_requirements():
@@ -11,13 +12,6 @@ setup(
     version='1.0.0',
     packages=find_packages(),
     install_requires=read_requirements(),
-    description='Парсер различный площадок',
-    long_description='',
+    long_description=open(join(dirname(__file__), 'README.md')).read(),
     author='0gl04q',
-    author_email='rdc_atm@mail.ru',
-    url='https://github.com/0gl04q/parser_market',
-    classifiers=[
-        'Programming Language :: Python :: 3'
-    ],
-    python_requires='>=3.6'
 )
