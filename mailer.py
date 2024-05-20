@@ -1,10 +1,12 @@
 import smtplib
+import os
+
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-FROM = '2000danilrusan2000@gmail.com'
-TO = 'rdc_atm@mail.ru'
-PASSWORD = 'eprx qgrd dezm bcii'
+FROM = os.environ['FROM']
+TO = os.environ['TO']
+PASSWORD = os.environ['PASSWORD']
 
 
 class Mail:

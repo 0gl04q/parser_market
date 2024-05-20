@@ -8,11 +8,12 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 
 import time
+import os
 
 from parser import Parser
 from shops import InternetShops
 
-PROFILE_PATH = '/home/oglo4q/snap/firefox/common/.mozilla/firefox/dipkdw6s.markets'
+PROFILE_PATH = os.environ['PROFILE_PATH']
 
 
 class Scraper:
