@@ -46,7 +46,7 @@ class Scraper:
 
         options = Options()
         options.profile = firefox_profile
-        # options.add_argument('--headless')
+        options.add_argument('--headless')
 
         self.driver = webdriver.Firefox(service=service, options=options)
 
