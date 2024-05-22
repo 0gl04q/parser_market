@@ -33,7 +33,7 @@ class InternetShops:
             ),
             items=Parameter(
                 tag='div',
-                attrs={'class': 'catalog-item-regular-desktop ddl_product catalog-item-desktop'}
+                attrs={'data-list-id': 'main'}
             ),
             name=Parameter(
                 tag='a',

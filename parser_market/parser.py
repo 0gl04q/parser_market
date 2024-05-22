@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import requests
 
-from parser_market.mailer import Mail
+from parser_market.mailer import one_send_mail
 from parser_market.logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -96,15 +96,27 @@ class Parser:
     def sort_df(self, by: str | list):
         self.df = self.df.sort_values(by=by)
 
+    def clean_in_db(self) -> bool:
+        logger.info(f'clean old info, order: {self.order}')
+
+        response = requests.request('delete', f'http://127.0.0.1:8000/api/cards/{self.order}/')
+
+        if response != 202:
+            logger.error(f'ERROR DELETE REQUEST FALL. CHECK EMAIL. ORDER: {self.order}')
+
+            one_send_mail(subject='Ошибка удаления записей',
+                          text=f'<p>Произошла ошибка при удалении старых карточек: {response.status_code},</p>'
+                               f'<p> Данные по заявке {self.order}</p><br>')
+            return False
+        return True
+
     def send_in_db(self):
-
+        
         logger.info(f'start send card in db, order: {self.order}')
-
-        mail = Mail()
 
         self.send_counter = 0
 
-        for index, item in self.df.iterrows():
+        for index, item in self.df.iterrows()[:10]:
             name, link, price, bonus, real_price = item
             response = requests.request('post', f'http://127.0.0.1:8000/api/cards/{self.order}/', data={
                 'order': self.order,
@@ -120,14 +132,12 @@ class Parser:
 
                 logger.error(f'ERROR SEND REQUEST ON SERVER. CHECK EMAIL. ORDER: {self.order}')
 
-                mail.send_message(
+                one_send_mail(
                     subject=f'Ошибка {response.status_code}',
                     text=f'<p> Произошла ошибка при передаче карточки: {response.status_code}, </p><br>'
                          f'<p> Данные по заявке {self.order}: {item}</p><br>'
                 )
             else:
                 self.send_counter += 1
-
-        mail.quit_server()
 
         logger.info(f'end send cards in db, order: {self.order}')
