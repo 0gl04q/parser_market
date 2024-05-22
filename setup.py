@@ -9,7 +9,7 @@ def read_requirements():
 
 setup(
     name='parser_markets',
-    version='1.1.1',
+    version='1.1.2',
     packages=find_packages(),
     install_requires=read_requirements(),
     author='0gl04q',

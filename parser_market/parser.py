@@ -116,7 +116,10 @@ class Parser:
 
         self.send_counter = 0
 
-        for index, item in self.df.iterrows()[:10]:
+        for index, item in self.df.iterrows():
+            if index == 10:
+                break
+
             name, link, price, bonus, real_price = item
             response = requests.request('post', f'http://127.0.0.1:8000/api/cards/{self.order}/', data={
                 'order': self.order,
