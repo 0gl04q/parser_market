@@ -10,6 +10,7 @@ class Parameter:
 @dataclass
 class ShopParameters:
     catalog: Parameter
+    photo: Parameter
     items: Parameter
     name: Parameter
     link: Parameter
@@ -30,6 +31,10 @@ class InternetShops:
             catalog=Parameter(
                 tag='div',
                 attrs={'class': 'catalog-items-list'}
+            ),
+            photo=Parameter(
+                tag='img',
+                attrs={'data-test': 'product-image'}
             ),
             items=Parameter(
                 tag='div',

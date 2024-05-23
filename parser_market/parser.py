@@ -25,12 +25,12 @@ class Parser:
         self.shop = shop
 
         self.names = []
+        self.photos = []
         self.price = []
         self.links = []
         self.bonus = []
 
         self.df = None
-        self.send_counter = None
 
         # Получаем значения
         if page_source:
@@ -60,6 +60,9 @@ class Parser:
             name = item.find(name=self.shop.parameters.name.tag,
                              attrs=self.shop.parameters.name.attrs).text
 
+            photo = item.find(name=self.shop.parameters.photo.tag,
+                              attrs=self.shop.parameters.photo.attrs).attrs['src']
+
             link = item.find(name=self.shop.parameters.link.tag,
                              attrs=self.shop.parameters.link.attrs).attrs['href']
 
@@ -74,6 +77,7 @@ class Parser:
             bonus = self.money_to_int(bonus.text) if bonus else 0
 
             self.names.append(name)
+            self.photos.append(photo)
             self.links.append(self.shop.link + link)
             self.price.append(price)
             self.bonus.append(bonus)
@@ -84,6 +88,7 @@ class Parser:
 
     def create_df(self):
         self.df = pd.DataFrame({'Имя': self.names,
+                                'Фото': self.photos,
                                 'Ссылки': self.links,
                                 'Цена': self.price,
                                 'Бонусы': self.bonus})
@@ -101,7 +106,7 @@ class Parser:
 
         response = requests.request('delete', f'http://127.0.0.1:8000/api/cards/{self.order}/')
 
-        if response != 202:
+        if response.status_code != 204:
             logger.error(f'ERROR DELETE REQUEST FALL. CHECK EMAIL. ORDER: {self.order}')
 
             one_send_mail(subject='Ошибка удаления записей',
@@ -111,36 +116,39 @@ class Parser:
         return True
 
     def send_in_db(self):
-        
+        if not self.clean_in_db():
+            return
+
         logger.info(f'start send card in db, order: {self.order}')
 
-        self.send_counter = 0
+        data = []
 
         for index, item in self.df.iterrows():
-            if index == 10:
+            if index == 12:
                 break
 
-            name, link, price, bonus, real_price = item
-            response = requests.request('post', f'http://127.0.0.1:8000/api/cards/{self.order}/', data={
-                'order': self.order,
+            name, photo, link, price, bonus, real_price = item
+
+            data.append({
+                'order': str(self.order),
                 'name': name,
                 'price': price,
                 'bonus': bonus,
                 'promo': 0,
+                'photo': photo,
                 'link': link,
                 'real_price': real_price,
             })
 
-            if response.status_code != 201:
+        response = requests.request('post', f'http://127.0.0.1:8000/api/cards/{self.order}/', json=data)
 
-                logger.error(f'ERROR SEND REQUEST ON SERVER. CHECK EMAIL. ORDER: {self.order}')
+        if response.status_code != 201:
+            logger.error(f'ERROR SEND REQUEST ON SERVER. CHECK EMAIL. ORDER: {self.order}')
 
-                one_send_mail(
-                    subject=f'Ошибка {response.status_code}',
-                    text=f'<p> Произошла ошибка при передаче карточки: {response.status_code}, </p><br>'
-                         f'<p> Данные по заявке {self.order}: {item}</p><br>'
-                )
-            else:
-                self.send_counter += 1
+            one_send_mail(
+                subject=f'Ошибка {response.status_code}',
+                text=f'<p> Произошла ошибка при передаче карточки: {response.status_code}, </p><br>'
+                     f'<p> Данные по заявке {self.order}</p><br>'
+            )
 
         logger.info(f'end send cards in db, order: {self.order}')
