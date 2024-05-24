@@ -78,7 +78,7 @@ class Parser:
 
             self.names.append(name)
             self.photos.append(photo)
-            self.links.append(self.shop.link + link)
+            self.links.append(self.shop.main + link)
             self.price.append(price)
             self.bonus.append(bonus)
 

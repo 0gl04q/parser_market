@@ -24,12 +24,14 @@ class ShopParameters:
 
 @dataclass
 class Shop:
+    main: str
     link: str
     parameters: ShopParameters
 
 
 class InternetShops:
     megamarket = Shop(
+        main='https://megamarket.ru',
         link='https://megamarket.ru/catalog/?q=',
         parameters=ShopParameters(
             catalog=Parameter(
