@@ -86,6 +86,22 @@ class Parser:
 
         logger.info(f'end updated lists, order: {self.order}')
 
+    def count_pages(self, page_source):
+        logger.info(f'count pages, order: {self.order}')
+
+        soup = BeautifulSoup(page_source, features='html.parser')
+
+        pager = soup.find(name=self.shop.parameters.pager.tag,
+                          attrs=self.shop.parameters.pager.attrs)
+
+        pages_el = pager.find_all(name=self.shop.parameters.page_el.tag)
+
+        count_pages = len(pages_el)
+
+        if count_pages > 5:
+            return 5
+        return count_pages
+
     def create_df(self):
         self.df = pd.DataFrame({'Имя': self.names,
                                 'Фото': self.photos,
@@ -124,7 +140,7 @@ class Parser:
         data = []
 
         for index, item in self.df.iterrows():
-            if index == 12:
+            if len(data) == 12:
                 break
 
             name, photo, link, price, bonus, real_price = item

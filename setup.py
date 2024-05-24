@@ -1,5 +1,4 @@
 from setuptools import setup, find_packages
-from os.path import join, dirname
 
 
 def read_requirements():
@@ -9,7 +8,7 @@ def read_requirements():
 
 setup(
     name='parser_markets',
-    version='1.1.3',
+    version='1.2.0',
     packages=find_packages(),
     install_requires=read_requirements(),
     author='0gl04q',

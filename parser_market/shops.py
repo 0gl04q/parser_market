@@ -4,18 +4,22 @@ from dataclasses import dataclass
 @dataclass
 class Parameter:
     tag: str
-    attrs: dict
+    attrs: dict = None
 
 
 @dataclass
 class ShopParameters:
     catalog: Parameter
-    photo: Parameter
     items: Parameter
+
     name: Parameter
+    photo: Parameter
     link: Parameter
     price: Parameter
     bonus: Parameter
+
+    pager: Parameter
+    page_el: Parameter
 
 
 @dataclass
@@ -55,6 +59,13 @@ class InternetShops:
             bonus=Parameter(
                 tag='span',
                 attrs={'class': 'bonus-amount'}
+            ),
+            pager=Parameter(
+                tag='ul',
+                attrs={'class': 'full'}
+            ),
+            page_el=Parameter(
+                tag='li'
             )
         )
     )

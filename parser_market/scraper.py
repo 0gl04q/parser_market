@@ -40,6 +40,8 @@ class Scraper:
         self.query = query
         self.order = order
 
+        self.source = Parser(self.order, self.shop)
+
         service = Service(executable_path='geckodriver')
 
         firefox_profile = FirefoxProfile(PROFILE_PATH)
@@ -77,6 +79,8 @@ class Scraper:
 
         time.sleep(5)
 
+        self.page_counter = self.source.count_pages(self.driver.page_source)
+
         logger.info(f'return main url, order: {self.order}')
 
         return self.driver.current_url
@@ -89,11 +93,9 @@ class Scraper:
 
     def __search_product(self):
 
-        source = Parser(self.order, self.shop)
-
         logger.info(f'start parsing url, order: {self.order}')
 
-        for num in range(1, 5):
+        for num in range(1, self.page_counter):
             current_page_url = self.__get_current_page_url(num)
             self.driver.get(current_page_url)
 
@@ -101,17 +103,17 @@ class Scraper:
 
             time.sleep(5)
 
-            source.page_source = self.driver.page_source
+            self.source.page_source = self.driver.page_source
 
             logger.info(f'start updating list, order: {self.order}')
 
-            source.update_lists()
+            self.source.update_lists()
 
-        source.create_df()
+        self.source.create_df()
         logger.info(f'create df, order: {self.order}')
 
-        source.sort_df('Разница')
+        self.source.sort_df('Разница')
         logger.info(f'sorted by ..., order: {self.order}')
 
-        source.send_in_db()
+        self.source.send_in_db()
         logger.info(f'send in db card, order, {self.order}')
